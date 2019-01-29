@@ -133,6 +133,9 @@ public class AddressBook {
     private static final String COMMAND_EXIT_DESC = "Exits the program.";
     private static final String COMMAND_EXIT_EXAMPLE = COMMAND_EXIT_WORD;
 
+    private static final String COMMAND_FINDIGNORE_WORD = "findIgnoreCase";
+    private static final String COMMAND_FINDIGNORE_DESC = "find by names without case";
+    private static final String COMMAND_FINDIGNORE_EXAMPLE = COMMAND_FINDIGNORE_WORD;
     private static final String DIVIDER = "===================================================";
 
 
@@ -381,12 +384,15 @@ public class AddressBook {
             return executeClearAddressBook();
         case COMMAND_HELP_WORD:
             return getUsageInfoForAllCommands();
+        case COMMAND_FINDIGNORE_WORD:
+            return executeFindPeronsIgnore(commandArgs);
         case COMMAND_EXIT_WORD:
             executeExitProgramRequest();
         default:
             return getMessageForInvalidCommandInput(commandType, getUsageInfoForAllCommands());
         }
     }
+
 
     /**
      * Splits raw user input into command word and command arguments string
@@ -455,7 +461,28 @@ public class AddressBook {
         showToUser(personsFound);
         return getMessageForPersonsDisplayedSummary(personsFound);
     }
+    private static String executeFindPeronsIgnore(String commandArgs) {
+        final Set<String> keywords = extractKeywordsFromFindPersonArgs(commandArgs);
+        final ArrayList<String[]> personsFound = getPersonsIgnore(keywords);
+        showToUser(personsFound);
+        return getMessageForPersonsDisplayedSummary(personsFound);
+    }
 
+    private static ArrayList<String[]> getPersonsIgnore(Collection<String> keywords) {
+        final ArrayList<String[]> matchedPersons = new ArrayList<>();
+        ArrayList<String> keywordsLower= new ArrayList<>();
+        for (String s : keywords){
+            keywordsLower.add(s.toLowerCase());
+
+        }
+        for (String[] person : getAllPersonsInAddressBook()) {
+            final Set<String> wordsInName = new HashSet<>(splitByWhitespaceIgnore(getNameFromPerson(person)));
+            if (!Collections.disjoint(wordsInName, keywordsLower)) {
+                matchedPersons.add(person);
+            }
+        }
+        return matchedPersons;
+    }
     /**
      * Constructs a feedback message to summarise an operation that displayed a listing of persons.
      *
@@ -1088,7 +1115,8 @@ public class AddressBook {
                 + getUsageInfoForDeleteCommand() + LS
                 + getUsageInfoForClearCommand() + LS
                 + getUsageInfoForExitCommand() + LS
-                + getUsageInfoForHelpCommand();
+                + getUsageInfoForHelpCommand()+ LS
+                + getUsageInfomationForFindIgnoreCommand();
     }
 
     /** Returns the string for showing 'add' command usage instruction */
@@ -1097,7 +1125,12 @@ public class AddressBook {
                 + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_ADD_PARAMETERS) + LS
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_ADD_EXAMPLE) + LS;
     }
+    private static String getUsageInfomationForFindIgnoreCommand(){
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_FINDIGNORE_WORD, COMMAND_FINDIGNORE_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_FIND_PARAMETERS) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_FINDIGNORE_EXAMPLE) + LS;
 
+    }
     /** Returns the string for showing 'find' command usage instruction */
     private static String getUsageInfoForFindCommand() {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_FIND_WORD, COMMAND_FIND_DESC) + LS
@@ -1162,6 +1195,14 @@ public class AddressBook {
      */
     private static ArrayList<String> splitByWhitespace(String toSplit) {
         return new ArrayList<>(Arrays.asList(toSplit.trim().split("\\s+")));
+    }
+    private static ArrayList<String> splitByWhitespaceIgnore(String toSplit) {
+        ArrayList<String> toRet = new ArrayList<>(Arrays.asList(toSplit.trim().split("\\s+")));
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(String name :toRet){
+            toReturn.add(name.toLowerCase());
+        }
+        return toReturn;
     }
 
 }

@@ -71,6 +71,10 @@
 || 
 || exit: Exits the program.	Example: exit
 || help: Shows program usage instructions.	Example: help
+|| findIgnoreCase: find by names without case
+|| 	Parameters: KEYWORD [MORE_KEYWORDS]
+|| 	Example: findIgnoreCase
+|| 
 || ===================================================
 || Enter command: || [Command entered:  clear]
 || Address book has been cleared!
@@ -186,6 +190,11 @@
 || Enter command: || [Command entered:  find betsy]
 || 
 || 0 persons found!
+|| ===================================================
+|| Enter command: || [Command entered:  findIgnoreCase betsy]
+|| 	1. Betsy Choo  Phone Number: 222222  Email: benchoo@nus.edu.sg
+|| 
+|| 1 persons found!
 || ===================================================
 || Enter command: || [Command entered:  find Betsy]
 || 	1. Betsy Choo  Phone Number: 222222  Email: benchoo@nus.edu.sg
